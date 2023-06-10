@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
+import 'controller/local_lang_controller.dart';
 import 'controller/theme_controller.dart';
 
 void main() async {
@@ -13,6 +14,7 @@ void main() async {
 }
 
 ThemeModeController themeModeController = Get.put(ThemeModeController());
+TraslateLanguege traslateLanguege = Get.put(TraslateLanguege());
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -23,7 +25,12 @@ class MyApp extends StatelessWidget {
       return GetMaterialApp(
         title: 'Flutter Demo',
         theme: themeModeController.theme,
+        initialRoute: traslateLanguege.initlanguege().toString(),
+        translations: LocalModel(),
         home: const MyHomePage(title: 'Flutter Demo Home Page'),
+        locale: traslateLanguege.english.value
+            ? const Locale('en', 'US')
+            : const Locale('KH', 'KH'),
       );
     });
   }
@@ -47,20 +54,52 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        child: Row(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'Light',
-              style: Theme.of(context).textTheme.headlineSmall,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'light_mode'.tr,
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+                CupertinoSwitch(
+                  value: themeModeController.isDark,
+                  onChanged: themeModeController.changeTheme,
+                ),
+                Text(
+                  'dark_mode'.tr,
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+              ],
             ),
-            CupertinoSwitch(
-              value: themeModeController.isDark,
-              onChanged: themeModeController.changeTheme,
-            ),
-            Text(
-              'Dark',
-              style: Theme.of(context).textTheme.headlineSmall,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'English',
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+                GetBuilder<TraslateLanguege>(
+                    init: traslateLanguege,
+                    builder: (context) {
+                      return CupertinoSwitch(
+                        value: traslateLanguege.english.value,
+                        onChanged: (value) async {
+                          var localeEng = const Locale('en', 'US');
+                          var localeKh = const Locale('KH', 'KH');
+                          traslateLanguege.switchLanguege(value.obs);
+                          Get.updateLocale(
+                              value == false ? localeEng : localeKh);
+                        },
+                      );
+                    }),
+                Text(
+                  'ខ្មែរ',
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+              ],
             ),
           ],
         ),
