@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:setting_app/controller/font_controller.dart';
 
 import 'controller/local_lang_controller.dart';
 import 'controller/theme_controller.dart';
@@ -101,6 +102,33 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ],
             ),
+            const SizedBox(
+              height: 30,
+            ),
+            GetBuilder<FontController>(
+              init: FontController(),
+              builder: (controller) {
+                return ExpansionTile(
+                  title: Text(
+                    'Font Style',
+                    style: TextStyle(
+                        fontFamily: controller.fontSelect.toString(),
+                        fontSize: 25),
+                  ),
+                  children: List.generate(
+                      controller.fonts.length,
+                      (index) => ListTile(
+                            onTap: () => controller.switchFont(index),
+                            title: Text(
+                              controller.fonts[index],
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontFamily: controller.fontSelect.toString()),
+                            ),
+                          )),
+                );
+              },
+            )
           ],
         ),
       ),
